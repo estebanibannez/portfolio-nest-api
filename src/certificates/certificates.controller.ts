@@ -14,6 +14,7 @@ import {
   ValidationPipe,
 } from '@nestjs/common';
 import { CertificateUpdateDto } from 'src/certificates/dto/certificate.dto.update';
+import { handleException } from 'src/exception/handle.exception';
 import { CertificatesService } from './certificates.service';
 import { CertificateDto } from './dto/certificate.dto';
 
@@ -61,19 +62,7 @@ export class CertificatesController {
         newCertificate,
       });
     } catch (error) {
-      if (error.code == 11000) {
-        return response.status(HttpStatus.BAD_REQUEST).json({
-          statusCode: 400,
-          message: 'Error: This certificate exists in db currently!',
-          error,
-        });
-      }
-
-      return response.status(HttpStatus.BAD_REQUEST).json({
-        statusCode: 400,
-        message: 'Error: Certificate not created!',
-        error,
-      });
+      handleException(error, 'certificate', response);
     }
   }
 

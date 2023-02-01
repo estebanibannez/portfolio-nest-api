@@ -9,6 +9,7 @@ import {
   Res,
   Put,
 } from '@nestjs/common';
+import { handleException } from 'src/exception/handle.exception';
 
 import { CategoryService } from './category.service';
 import { CreateCategoryDto } from './dto/create-category.dto';
@@ -27,20 +28,7 @@ export class CategoryController {
         newCategory,
       });
     } catch (error) {
-      console.log('catch error', error);
-      if (error.code == 11000) {
-        return response.status(HttpStatus.BAD_REQUEST).json({
-          statusCode: 400,
-          message: 'Error: This category exists in db currently!',
-          error,
-        });
-      }
-
-      return response.status(HttpStatus.BAD_REQUEST).json({
-        statusCode: 400,
-        message: 'Error: Category not created!',
-        error,
-      });
+      handleException(error, 'category', response);
     }
   }
 
