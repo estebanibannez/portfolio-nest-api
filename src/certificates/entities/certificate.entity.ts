@@ -18,6 +18,9 @@ export class Certificate extends Document {
   @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'Category' })
   category: Category;
 
+  @Prop()
+  url: string;
+
   @Prop({ required: true })
   dateIni: Date;
 

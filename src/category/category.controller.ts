@@ -3,15 +3,13 @@ import {
   Get,
   Post,
   Body,
-  Patch,
   Param,
   Delete,
-  HttpCode,
   HttpStatus,
   Res,
   Put,
 } from '@nestjs/common';
-import { response } from 'express';
+
 import { CategoryService } from './category.service';
 import { CreateCategoryDto } from './dto/create-category.dto';
 import { UpdateCategoryDto } from './dto/update-category.dto';
@@ -71,13 +69,13 @@ export class CategoryController {
     @Body() updateCategoryDto: UpdateCategoryDto,
   ) {
     try {
-      const existingStudent = await this.categoryService.update(
+      const existingCategory = await this.categoryService.update(
         term,
         updateCategoryDto,
       );
       return response.status(HttpStatus.OK).json({
         message: 'Category has been successfully updated',
-        existingStudent,
+        existingCategory,
       });
     } catch (err) {
       return response.status(err.status).json(err.response);

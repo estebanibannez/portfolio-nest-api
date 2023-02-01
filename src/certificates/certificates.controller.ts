@@ -3,11 +3,13 @@ import {
   Controller,
   Delete,
   Get,
+  HttpStatus,
   Param,
   ParseIntPipe,
   ParseUUIDPipe,
-  Patch,
   Post,
+  Put,
+  Res,
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
@@ -20,30 +22,92 @@ import { CertificateDto } from './dto/certificate.dto';
 export class CertificatesController {
   constructor(private certificatesService: CertificatesService) {}
   @Get()
-  getAll() {
-    return this.certificatesService.getAll();
+  async findAll(@Res() response) {
+    try {
+      const data = await this.certificatesService.findAll();
+      return response.status(HttpStatus.OK).json({
+        message: 'All Certificates data found successfully',
+        data,
+      });
+    } catch (err) {
+      return response.status(err.status).json(err.response);
+    }
   }
 
   @Get('/:id')
-  getById(@Param('id', ParseIntPipe) id: number) {
-    return this.certificatesService.getById(id);
+  async getById(@Res() response, @Param('id') id: string) {
+    try {
+      const data = await this.certificatesService.findOne(id);
+      return response.status(HttpStatus.CREATED).json({
+        message: `Certificate find #${id} succesfully`,
+        data,
+      });
+    } catch (error) {
+      return response.status(error.status).json(error.response);
+    }
   }
 
   @Post()
-  createCertificate(@Body() certificateDto: CertificateDto) {
-    return this.certificatesService.create(certificateDto);
+  async createCertificate(
+    @Res() response,
+    @Body() certificateDto: CertificateDto,
+  ) {
+    try {
+      const newCertificate = await this.certificatesService.create(
+        certificateDto,
+      );
+      return response.status(HttpStatus.CREATED).json({
+        message: 'Certificate has been created successfully',
+        newCertificate,
+      });
+    } catch (error) {
+      if (error.code == 11000) {
+        return response.status(HttpStatus.BAD_REQUEST).json({
+          statusCode: 400,
+          message: 'Error: This certificate exists in db currently!',
+          error,
+        });
+      }
+
+      return response.status(HttpStatus.BAD_REQUEST).json({
+        statusCode: 400,
+        message: 'Error: Certificate not created!',
+        error,
+      });
+    }
   }
 
-  @Patch(':id')
-  updateCertificate(
-    @Param('id', ParseUUIDPipe) id: string,
+  @Put(':id')
+  async updateCertificate(
+    @Res() response,
+    @Param('id') id: string,
     @Body() certificateUpdateDto: CertificateUpdateDto,
   ) {
-    return this.certificatesService.update(id, certificateUpdateDto);
+    try {
+      const existingCertificate = await this.certificatesService.update(
+        id,
+        certificateUpdateDto,
+      );
+      return response.status(HttpStatus.OK).json({
+        message: 'Certificate has been successfully updated',
+        existingCertificate,
+      });
+    } catch (error) {
+      return response.status(error.status).json(error.response);
+    }
   }
 
   @Delete(':id')
-  deleteCertificate(@Param('id', ParseIntPipe) id: number) {
-    return id;
+  async deleteCertificate(@Res() response, @Param('id') id: string) {
+    try {
+      const deletedCertificate = await this.certificatesService.delete(id);
+      console.log('controller: ', deletedCertificate);
+      return response.status(HttpStatus.OK).json({
+        message: 'Certificate deleted successfully',
+        deletedCertificate,
+      });
+    } catch (error) {
+      return response.status(error.status).json(error.response);
+    }
   }
 }

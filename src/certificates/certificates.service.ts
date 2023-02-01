@@ -1,48 +1,78 @@
-import { Injectable } from '@nestjs/common';
+import {
+  Injectable,
+  InternalServerErrorException,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 
 import { Model } from 'mongoose';
 
 import { CertificateDto, CertificateUpdateDto } from 'src/certificates/dto';
 import { Certificate } from 'src/certificates/entities/certificate.entity';
+import { ICertificate } from 'src/certificates/interface/certificate.interface';
 
 @Injectable()
 export class CertificatesService {
   constructor(
     @InjectModel(Certificate.name)
-    private readonly model: Model<Certificate>,
+    private readonly modelCertificates: Model<Certificate>,
   ) {}
 
-  async getAll() {
-    try {
-      return await this.model.find({});
-    } catch (error) {
-      console.log('Ocurrió un error: ' + error);
+  async findAll(): Promise<ICertificate[]> {
+    const allCertificates = await this.modelCertificates
+      .find({})
+      .populate('category');
+
+    if (!allCertificates) {
+      throw new NotFoundException(`Certificates not found`);
     }
+    return allCertificates;
   }
 
-  getById(id: number) {
-    return { id: id, name: 'test' };
-  }
-
-  async create(CertificateDto) {
-    try {
-      const newCertificate = await this.model.create(CertificateDto);
-      console.log(newCertificate);
-      return newCertificate;
-    } catch (error) {
-      console.log('Ocurrió un error', error);
+  async findOne(id: string): Promise<ICertificate> {
+    const existingCertificate = await this.modelCertificates
+      .findById(id)
+      .exec();
+    console.log(existingCertificate);
+    if (!existingCertificate) {
+      throw new NotFoundException(`Certificate #${id} not found`);
     }
+    return existingCertificate;
   }
 
-  async update(id: string, certificateUpdateDto: CertificateUpdateDto) {
+  async create(CertificateDto): Promise<ICertificate> {
+    const newCertificate = await this.modelCertificates.create(CertificateDto);
+    return newCertificate;
+  }
+
+  async update(
+    id: string,
+    certificateUpdateDto: CertificateUpdateDto,
+  ): Promise<ICertificate> {
+    const existingCertificate = await this.modelCertificates.findByIdAndUpdate(
+      id,
+      certificateUpdateDto,
+      { new: true },
+    );
+    if (!existingCertificate) {
+      throw new NotFoundException(`Certificate with #${id} not found`);
+    }
+    return existingCertificate;
+  }
+
+  async delete(id: string): Promise<ICertificate> {
     try {
-      return await this.model.updateOne(
-        { _id: id },
-        { $set: certificateUpdateDto },
+      const deletedCertificate = await this.modelCertificates.findByIdAndDelete(
+        id,
       );
+      console.log('service: ', deletedCertificate);
+      if (!deletedCertificate) {
+        throw new NotFoundException(`Certificate with #${id} not found`);
+      }
+      return deletedCertificate;
     } catch (error) {
-      console.log('Ocurrió un error', error);
+      console.log('Ocurrió un error: ', error);
+      throw new InternalServerErrorException(error);
     }
   }
 }
