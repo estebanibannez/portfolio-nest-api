@@ -1,21 +1,48 @@
 import { Injectable } from '@nestjs/common';
+import { InjectModel } from '@nestjs/mongoose';
+
+import { Model } from 'mongoose';
+
 import { CertificateDto, CertificateUpdateDto } from 'src/certificates/dto';
+import { Certificate } from 'src/certificates/entities/certificate.entity';
 
 @Injectable()
 export class CertificatesService {
-  getAll() {
-    return [{ id: 1, name: 'certificado 1' }];
+  constructor(
+    @InjectModel(Certificate.name)
+    private readonly model: Model<Certificate>,
+  ) {}
+
+  async getAll() {
+    try {
+      return await this.model.find({});
+    } catch (error) {
+      console.log('Ocurrió un error: ' + error);
+    }
   }
 
   getById(id: number) {
     return { id: id, name: 'test' };
   }
 
-  create({ name, description, category }: CertificateDto) {
-    return name;
+  async create(CertificateDto) {
+    try {
+      const newCertificate = await this.model.create(CertificateDto);
+      console.log(newCertificate);
+      return newCertificate;
+    } catch (error) {
+      console.log('Ocurrió un error', error);
+    }
   }
 
-  update(id: string, certificateUpdateDto: CertificateUpdateDto) {
-    return id;
+  async update(id: string, certificateUpdateDto: CertificateUpdateDto) {
+    try {
+      return await this.model.updateOne(
+        { _id: id },
+        { $set: certificateUpdateDto },
+      );
+    } catch (error) {
+      console.log('Ocurrió un error', error);
+    }
   }
 }

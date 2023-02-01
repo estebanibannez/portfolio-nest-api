@@ -20,6 +20,10 @@ export class CertificateUpdateDto {
   @IsOptional()
   readonly description?: string;
 
+  @IsOptional()
+  @IsString()
+  readonly url: string;
+
   @IsString()
   @IsOptional()
   readonly category?: string;
