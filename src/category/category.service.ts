@@ -20,19 +20,10 @@ export class CategoryService {
   ) {}
 
   async create(createCategoryDto: CreateCategoryDto): Promise<ICategory> {
-    try {
-      createCategoryDto.name = createCategoryDto.name
-        .toLocaleLowerCase()
-        .trim();
-      const category = await this.categoryModel.create(createCategoryDto);
-      return category;
-    } catch (error) {
-      console.log('Ocurrió un error', error);
-      if (error.code == 11000) {
-        throw new BadRequestException(`Category exists in db :${error}`);
-      }
-      throw new InternalServerErrorException(`Ocurrió un error`, error);
-    }
+    createCategoryDto.name = createCategoryDto.name.toLocaleLowerCase().trim();
+    const category = await new this.categoryModel(createCategoryDto);
+
+    return category.save();
   }
 
   async findAll(): Promise<ICategory[]> {

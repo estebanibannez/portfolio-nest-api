@@ -9,7 +9,9 @@ import {
   HttpCode,
   HttpStatus,
   Res,
+  Put,
 } from '@nestjs/common';
+import { response } from 'express';
 import { CategoryService } from './category.service';
 import { CreateCategoryDto } from './dto/create-category.dto';
 import { UpdateCategoryDto } from './dto/update-category.dto';
@@ -19,14 +21,42 @@ export class CategoryController {
   constructor(private readonly categoryService: CategoryService) {}
 
   @Post()
-  @HttpCode(HttpStatus.OK)
-  create(@Res() response, @Body() createCategoryDto: CreateCategoryDto) {
-    return this.categoryService.create(createCategoryDto);
+  async create(@Res() response, @Body() createCategoryDto: CreateCategoryDto) {
+    try {
+      const newCategory = await this.categoryService.create(createCategoryDto);
+      return response.status(HttpStatus.OK).json({
+        message: 'Category has been created successfully',
+        newCategory,
+      });
+    } catch (error) {
+      console.log('catch error', error);
+      if (error.code == 11000) {
+        return response.status(HttpStatus.BAD_REQUEST).json({
+          statusCode: 400,
+          message: 'Error: This category exists in db currently!',
+          error,
+        });
+      }
+
+      return response.status(HttpStatus.BAD_REQUEST).json({
+        statusCode: 400,
+        message: 'Error: Category not created!',
+        error,
+      });
+    }
   }
 
   @Get()
-  findAll() {
-    return this.categoryService.findAll();
+  async findAll(@Res() response) {
+    try {
+      const data = await this.categoryService.findAll();
+      return response.status(HttpStatus.OK).json({
+        message: 'All Categories data found successfully',
+        data,
+      });
+    } catch (err) {
+      return response.status(err.status).json(err.response);
+    }
   }
 
   @Get(':term')
@@ -34,16 +64,32 @@ export class CategoryController {
     return this.categoryService.findOne(term);
   }
 
-  @Patch(':term')
-  update(
+  @Put(':term')
+  async update(
+    @Res() response,
     @Param('term') term: string,
     @Body() updateCategoryDto: UpdateCategoryDto,
   ) {
-    return this.categoryService.update(term, updateCategoryDto);
+    try {
+      const existingStudent = await this.categoryService.update(
+        term,
+        updateCategoryDto,
+      );
+      return response.status(HttpStatus.OK).json({
+        message: 'Category has been successfully updated',
+        existingStudent,
+      });
+    } catch (err) {
+      return response.status(err.status).json(err.response);
+    }
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.categoryService.remove(id);
+  async remove(@Res() response, @Param('id') id: string) {
+    const deletedCategory = await this.categoryService.remove(id);
+    return response.status(HttpStatus.OK).json({
+      message: 'Category deleted successfully',
+      deletedCategory,
+    });
   }
 }
