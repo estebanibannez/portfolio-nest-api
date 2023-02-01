@@ -5,8 +5,6 @@ import {
   Get,
   HttpStatus,
   Param,
-  ParseIntPipe,
-  ParseUUIDPipe,
   Post,
   Put,
   Res,
@@ -17,6 +15,7 @@ import { CertificateUpdateDto } from 'src/certificates/dto/certificate.dto.updat
 import { handleException } from 'src/exception/handle.exception';
 import { CertificatesService } from './certificates.service';
 import { CertificateDto } from './dto/certificate.dto';
+import { ParseMongoIdPipe } from '../common/pipes/parse-mongo-id/parse-mongo-id.pipe';
 
 @Controller('certificates')
 @UsePipes(ValidationPipe)
@@ -69,7 +68,7 @@ export class CertificatesController {
   @Put(':id')
   async updateCertificate(
     @Res() response,
-    @Param('id') id: string,
+    @Param('id', ParseMongoIdPipe) id: string,
     @Body() certificateUpdateDto: CertificateUpdateDto,
   ) {
     try {
@@ -90,7 +89,7 @@ export class CertificatesController {
   async deleteCertificate(@Res() response, @Param('id') id: string) {
     try {
       const deletedCertificate = await this.certificatesService.delete(id);
-      console.log('controller: ', deletedCertificate);
+
       return response.status(HttpStatus.OK).json({
         message: 'Certificate deleted successfully',
         deletedCertificate,

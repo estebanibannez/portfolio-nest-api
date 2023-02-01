@@ -65,7 +65,7 @@ export class CertificatesService {
       const deletedCertificate = await this.modelCertificates.findByIdAndDelete(
         id,
       );
-      console.log('service: ', deletedCertificate);
+
       if (!deletedCertificate) {
         throw new NotFoundException(`Certificate with #${id} not found`);
       }

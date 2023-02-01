@@ -5,6 +5,7 @@ import { AppService } from './app.service';
 import { CertificatesModule } from './certificates/certificates.module';
 import { JobsModule } from './jobs/jobs.module';
 import { CategoryModule } from './category/category.module';
+import { CommonModule } from './common/common.module';
 
 @Module({
   imports: [
@@ -12,6 +13,7 @@ import { CategoryModule } from './category/category.module';
     JobsModule,
     CategoryModule,
     MongooseModule.forRoot('mongodb://localhost/nest-portfolio'),
+    CommonModule,
   ],
   controllers: [AppController],
   providers: [AppService],
