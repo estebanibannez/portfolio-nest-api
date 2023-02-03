@@ -8,7 +8,10 @@ import {
   HttpStatus,
   Res,
   Put,
+  Req,
 } from '@nestjs/common';
+import { ApiTags } from '@nestjs/swagger';
+import { Request, Response } from 'express';
 import { handleException } from 'src/exception/handle.exception';
 
 import { CategoryService } from './category.service';
@@ -16,6 +19,8 @@ import { CreateCategoryDto } from './dto/create-category.dto';
 import { UpdateCategoryDto } from './dto/update-category.dto';
 
 @Controller('category')
+//Decorador para agrupar endpoints en swagger
+@ApiTags('Categories')
 export class CategoryController {
   constructor(private readonly categoryService: CategoryService) {}
 
@@ -33,9 +38,9 @@ export class CategoryController {
   }
 
   @Get()
-  async findAll(@Res() response) {
+  async findAll(@Req() request?: Request, @Res() response?: Response) {
     try {
-      const data = await this.categoryService.findAll();
+      const data = await this.categoryService.findAll(request);
       return response.status(HttpStatus.OK).json({
         message: 'All Categories data found successfully',
         data,

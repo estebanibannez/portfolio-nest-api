@@ -6,6 +6,7 @@ export interface IAbilities {
   years: number;
 }
 
+export type JobDocument = Job & Document;
 @Schema()
 export class Job extends Document {
   @Prop({ index: true, required: true })

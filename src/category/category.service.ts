@@ -1,22 +1,24 @@
 import {
-  BadRequestException,
   Injectable,
   InternalServerErrorException,
   NotFoundException,
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { isValidObjectId, Model } from 'mongoose';
-import { Category } from 'src/category/entities/category.entity';
+import { Request } from 'express';
+import {
+  Category,
+  CategoryDocument,
+} from 'src/category/entities/category.entity';
 import { CreateCategoryDto } from './dto/create-category.dto';
 import { UpdateCategoryDto } from './dto/update-category.dto';
 import { ICategory } from './interface/category.interface';
-import { INotFound } from '../exception/interface/notFound.interface';
 
 @Injectable()
 export class CategoryService {
   constructor(
     @InjectModel(Category.name)
-    private readonly categoryModel: Model<Category>,
+    private readonly categoryModel: Model<CategoryDocument>,
   ) {}
 
   async create(createCategoryDto: CreateCategoryDto): Promise<ICategory> {
@@ -26,9 +28,12 @@ export class CategoryService {
     return category.save();
   }
 
-  async findAll(): Promise<ICategory[]> {
+  async findAll(request: Request): Promise<ICategory[]> {
     try {
-      return await this.categoryModel.find({});
+      return await this.categoryModel
+        .find(request.query)
+        .setOptions({ sanitizeFilter: true })
+        .exec();
     } catch (error) {
       console.log('Ocurrió un error', error);
       throw new InternalServerErrorException(error);
@@ -82,7 +87,7 @@ export class CategoryService {
 
   async remove(id: string): Promise<ICategory> {
     try {
-      const deletedCategory = await this.categoryModel.findByIdAndDelete(id);
+      const deletedCategory = await this.categoryModel.findByIdAndRemove(id);
       if (!deletedCategory) {
         throw new NotFoundException(`Category #${id} not found`);
       }

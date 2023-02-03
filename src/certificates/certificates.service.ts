@@ -8,14 +8,17 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 
 import { CertificateDto, CertificateUpdateDto } from 'src/certificates/dto';
-import { Certificate } from 'src/certificates/entities/certificate.entity';
+import {
+  Certificate,
+  CertificateDocument,
+} from 'src/certificates/entities/certificate.entity';
 import { ICertificate } from 'src/certificates/interface/certificate.interface';
 
 @Injectable()
 export class CertificatesService {
   constructor(
     @InjectModel(Certificate.name)
-    private readonly modelCertificates: Model<Certificate>,
+    private readonly modelCertificates: Model<CertificateDocument>,
   ) {}
 
   async findAll(): Promise<ICertificate[]> {

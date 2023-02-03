@@ -2,6 +2,8 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import mongoose, { Document } from 'mongoose';
 import { Category } from 'src/category/entities/category.entity';
 
+
+export type CertificateDocument = Certificate & Document; 
 @Schema()
 export class Certificate extends Document {
   @Prop({

@@ -11,6 +11,7 @@ import {
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
+import { ApiTags } from '@nestjs/swagger';
 import { CertificateUpdateDto } from 'src/certificates/dto/certificate.dto.update';
 import { handleException } from 'src/exception/handle.exception';
 import { CertificatesService } from './certificates.service';
@@ -18,6 +19,8 @@ import { CertificateDto } from './dto/certificate.dto';
 import { ParseMongoIdPipe } from '../common/pipes/parse-mongo-id/parse-mongo-id.pipe';
 
 @Controller('certificates')
+//Decorador para agrupar endpoints en swagger
+@ApiTags('Certificates')
 @UsePipes(ValidationPipe)
 export class CertificatesController {
   constructor(private certificatesService: CertificatesService) {}
