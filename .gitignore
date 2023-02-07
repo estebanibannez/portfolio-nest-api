@@ -36,3 +36,5 @@ lerna-debug.log*
 
 #docker-compose
 /mongo
+.env
+.development.env
