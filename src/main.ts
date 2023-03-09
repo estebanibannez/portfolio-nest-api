@@ -31,6 +31,7 @@ async function bootstrap() {
       }),
     );
 
+    // Crear documentación
     const document = SwaggerModule.createDocument(app, options);
 
     // La ruta en que se sirve la documentación
