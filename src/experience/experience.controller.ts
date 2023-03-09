@@ -22,9 +22,9 @@ export class ExperienceController {
   constructor(private readonly experienceService: ExperienceService) {}
 
   @Post()
-  create(@Res() response, @Body() createExperienceDto: CreateExperienceDto) {
+ async create(@Res() response, @Body() createExperienceDto: CreateExperienceDto) {
     try {
-      const newExperience = this.experienceService.create(createExperienceDto);
+      const newExperience = await this.experienceService.create(createExperienceDto);
 
       return response.status(HttpStatus.CREATED).json({
         message: 'Experience has been created successfully',
