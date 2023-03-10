@@ -6,7 +6,7 @@ export type ExperienceDocument = Experience & Document;
 @Schema()
 export class Experience extends Document {
     @Prop({
-        unique: true,
+        unique: false,
         index: true,
         required: true,
     })
