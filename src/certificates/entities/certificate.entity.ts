@@ -7,7 +7,6 @@ export type CertificateDocument = Certificate & Document;
 @Schema()
 export class Certificate extends Document {
   @Prop({
-    unique: true,
     index: true,
     required: true,
   })

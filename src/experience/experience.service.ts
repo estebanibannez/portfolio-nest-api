@@ -21,7 +21,7 @@ export class ExperienceService {
 
   async findAll(): Promise<IExperience[]> {
     const AllExperience = await this.modelExperience
-      .find({});
+      .find().sort({endDate: 'desc'});
 
     if (!AllExperience) {
       throw new NotFoundException(`Experiences not found`);
