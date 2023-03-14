@@ -9,4 +9,9 @@ export class CreateCategoryDto {
     example: 'Nombre de la categoria',
   })
   name: string;
+  @IsString()
+  @ApiProperty({
+    example: 'Descripción de la categoria',
+  })
+  description: string;
 }

@@ -11,16 +11,13 @@ import {
 export class CertificateDto {
   @IsString()
   @IsNotEmpty()
-  @MinLength(3, {
-    message: 'El nombre del certificado debe tener minimo 3 o más caracteres',
-  })
   @ApiProperty({ example: 'Nombre para el certificado' })
-  readonly name: string;
+  name: string;
 
   @IsNotEmpty()
   @IsString()
-  @MaxLength(100, {
-    message: 'has superado el máximo de caracteres permitidos',
+  @MaxLength(400, {
+    message: 'has superado el máximo de caracteres permitidos en la descripción',
   })
   @ApiProperty({ example: 'Descripción para el certificado' })
   readonly description: string;

@@ -13,7 +13,6 @@ export class CertificateUpdateDto {
 
   @IsString()
   @IsOptional()
-  @MinLength(3, { message: 'El nombre debe tener minimo 3 o más caracteres' })
   readonly name?: string;
 
   @IsString()

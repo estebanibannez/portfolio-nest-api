@@ -22,9 +22,14 @@ export class ExperienceController {
   constructor(private readonly experienceService: ExperienceService) {}
 
   @Post()
- async create(@Res() response, @Body() createExperienceDto: CreateExperienceDto) {
+  async create(
+    @Res() response,
+    @Body() createExperienceDto: CreateExperienceDto,
+  ) {
     try {
-      const newExperience = await this.experienceService.create(createExperienceDto);
+      const newExperience = await this.experienceService.create(
+        createExperienceDto,
+      );
 
       return response.status(HttpStatus.CREATED).json({
         message: 'Experience has been created successfully',
@@ -42,7 +47,11 @@ export class ExperienceController {
 
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.experienceService.findOne(+id);
+    try {
+      return this.experienceService.findOne(+id);
+    } catch (error) {
+      handleException(error, 'experience', null);
+    }
   }
 
   @Patch(':id')

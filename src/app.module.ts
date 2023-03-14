@@ -7,6 +7,7 @@ import { CategoryModule } from './category/category.module';
 import { CommonModule } from './common/common.module';
 import { ConfigModule } from '@nestjs/config';
 import { ExperienceModule } from './experience/experience.module';
+import { EducationModule } from './education/education.module';
 
 @Module({
   imports: [
@@ -18,9 +19,11 @@ import { ExperienceModule } from './experience/experience.module';
     CategoryModule,
     ExperienceModule,
     CommonModule,
+    EducationModule,
     MongooseModule.forRoot(
       `mongodb+srv://${process.env.DATABASE_USER}:${process.env.DATABASE_PASSWORD}@portfoliodb.d8pfr8w.mongodb.net/${process.env.DATABASE_NAME}`,
     ),
+    
   ],
 })
 export class AppModule {
